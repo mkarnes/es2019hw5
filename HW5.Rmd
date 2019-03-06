@@ -1,0 +1,68 @@
+---
+title: "HW5Q4"
+output: html_notebook
+author: Molly Karnes
+---
+
+I am interested in the R package "MixSIAR".
+
+The desciption of the package from the readme file in brianstock's MixSIAR repository is:
+"MixSIAR is an R package that helps you create and run Bayesian mixing models to analyze biotracer data (i.e. stable isotopes, fatty acids), following the MixSIAR model framework. Both graphical user interface (GUI) and script versions are available.
+MixSIAR represents a collaborative coding project between the investigators behind MixSIR, SIAR, and IsoSource: Brice Semmens, Brian Stock, Eric Ward, Andrew Parnell, Donald Phillips, and Andrew Jackson.
+MixSIAR incorporates several years of advances in Bayesian mixing model theory since MixSIR and SIAR, currently:
+Any number of biotracers (examples with 1 isotope, 2 isotope, 8 fatty acids, and 22 fatty acids)
+Source data fit hierarchically within the model
+Source data by categorical covariate (e.g. sources by Region)
+Categorical covariates (up to 2, choice of modeling as random or fixed effects, either nested or independent)
+Continuous covariate (up to 1)
+Error structure options with covariance (Residual * Process, Residual only)
+Concentration dependence
+Plot and include “uninformative”/generalist or informative priors
+Fit multiple models and compare relative support using LOO/WAIC weights"
+
+Citation for the MixSIAR package:
+
+B. C. Stock and B. X. Semmens (2016). MixSIAR GUI User Manual. Version 3.1. https://github.com/brianstock/MixSIAR. doi:10.5281/zenodo.1209993.
+
+One script from this repository is called plot_data.r
+This is a function for plotting your biotracer data. 
+
+```{r}
+plot_data <- function(filename,plot_save_pdf,plot_save_png,mix,source,discr){
+
+  # check that discr rownames match source_names
+
+  if(!identical(rownames(discr$mu),source$source_names)){                             ##My notes, This first part of the fxn checks that your data 
+
+    stop(paste("*** Error: Source names do not match in source and discr              ## tables are formatted properly, if not it returns informative 
+    data files. Please check your source and discr data file row names.",sep=""))}   ##error codes on the problem that exists w/ your formatting
+
+  if(!identical(rownames(discr$sig2),source$source_names)){
+
+    stop(paste("*** Error: Source names do not match in source and discr
+
+    data files. Please check your source and discr data file row names.",sep=""))}
+
+
+
+  if(mix$n.iso==1){                                                                 ## If you have 1 biotracer it plots it here, and saves the plot
+
+    plot_data_one_iso(mix,source,discr,filename,plot_save_pdf,plot_save_png)
+
+  } else {
+
+    for(iso1 in 1:(mix$n.iso-1)){                                                  ## If multiple, it loops and plots all pairwise comparasions, 
+
+      for(iso2 in (iso1+1):mix$n.iso){                                             ## and saves the plots
+
+        plot_data_two_iso(c(iso1,iso2),mix,source,discr,filename,plot_save_pdf,plot_save_png)
+
+      }
+
+    }
+
+  }
+
+} # end plot_data function
+```
+
